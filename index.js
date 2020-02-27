@@ -1,7 +1,8 @@
+// Node modules
 const inquirer = require("inquirer");
-
 const dotenv = require('dotenv');
 const fs = require('fs');
+
 const API = require("./utils/api");
 
 var userImage = "";
@@ -53,106 +54,127 @@ const questions = [
         type: "input",
         message: "Please provide any test scripts that can be run.",
         name: "tests"
+    // },
+    // {
+    //     type: "input",
+    //     message: "Questions?",
+    //     name: "questions"
     }
 ];
 
 
-function writeToFile(fileName, data) {
+
+async function main() {
+    const { username } = await inquirer.prompt({
+        type: "input",
+        name: "username",
+        message: "What is your GitHub username?"
+    });
+    //console.log(username);
+
+    const { data } = await API.getUser(username);
+    //console.log(data);
+    userImage = data.avatar_url;
+    console.log(userImage);
+    if (data.email === null) {
+        userEmail = "not available"
+    } else {
+        userEmail = data.email;
+    }
+
+    const answers = await inquirer.prompt(questions)
+
+    writeToFile("gdReadMe.md", answers);
+
 }
 
-function init() {
 
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "username",
-            message: "What is your GitHub username?"
-        }
+main();
 
-    ]).then(function ({ username }) {
 
-        API.getUser(username)
-           .then(function({data}){
-              //console.log(data);
-              userImage = data.avatar_url;
-              console.log(userImage);
-              userEmail = data.email;
+async function writeToFile(fileName, answers) {
+    try {
+    
+        console.log(answers);
 
-              inquirer
-                .prompt(questions)
-                .then(function(answers) {
-                    console.log(answers);
-                    const title = "# " + answers.projectTitle + "\n\n";
-                    fs.writeFile("gdReadMe.md", title, function(err){});
+        const title = "# " + answers.projectTitle + "\n\n";
+        //const title = "# ReadMe Generator\n\n";
+        fs.writeFileSync(fileName, title);
 
-                    const hdgDesc     = "## Description\n";
-                    const description = answers.projectDescription + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgDesc, function(err){});
-                    fs.appendFile("gdReadMe.md", description, function(err){});
+        const hdgDesc     = "## Description\n";
+        fs.appendFileSync(fileName, hdgDesc);
 
-                    const hdgInstall   = "## Installation\n";
-                    const installation = answers.installation + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgInstall, function(err){});
-                    fs.appendFile("gdReadMe.md", installation, function(err){});
+        const description = answers.projectDescription + "\n\n";
+        //const description = "Create a good README from user input.\n\n";
+        fs.appendFileSync(fileName, description);
 
-                    const hdgUsage     = "## Usage\n";
-                    const usage        = answers.usage + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgUsage, function(err){});
-                    fs.appendFile("gdReadMe.md", usage, function(err){});
+        const tableOfContents = "## Table of Contents\n\n" +
+                                "* [Installation](#installation)\n" +
+                                "* [Usage](#usage)\n" +
+                                "* [Credits](#credits)\n" +
+                                "* [License](#license)\n" +
+                                "* [Credits](#credits)\n" +
+                                "* [Tests](#tests)\n" +
+                                "* [Contributing](#contributing)\n"
+                                "* [Questions](#questions)\n\n";
+        fs.appendFileSync(fileName, tableOfContents);
 
-                    const hdgCredits   = "## Credits\n";
-                    const credits      = answers.credits + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgCredits, function(err){});
-                    fs.appendFile("gdReadMe.md", credits, function(err){});
+        const hdgInstall   = "## Installation\n";
+        fs.appendFileSync(fileName, hdgInstall);
 
-                    const hdgLicense   = "## License\n";
-                    const license      = answers.license + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgLicense, function(err){});
-                    fs.appendFile("gdReadMe.md", license, function(err){});
+        const installation = answers.installation + "\n\n";
+        fs.appendFileSync(fileName, installation);
 
-                    const hdgBadges    = "## Badges\n";
-                    //const badges       = answers.badges + "\n\n";
-                    const badges       = 
-                    "[GitHub](https://img.shields.io/badge/license-MIT-green)\n\n";
-                    fs.appendFile("gdReadMe.md", hdgBadges, function(err){});
-                    fs.appendFile("gdReadMe.md", badges, function(err){});
+        const hdgUsage     = "## Usage\n";
+        fs.appendFileSync(fileName, hdgUsage);
 
-                    const hdgContribute = "## Contributing\n";
-                    const contribute    = answers.contribute + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgContribute, function(err){});
-                    fs.appendFile("gdReadMe.md", contribute, function(err){});
+        const usage        = answers.usage + "\n\n";
+        fs.appendFileSync(fileName, usage);
 
-                    const hdgTests      = "## Tests\n";
-                    const tests         = answers.tests + "\n\n";
-                    fs.appendFile("gdReadMe.md", hdgTests, function(err){});
-                    fs.appendFile("gdReadMe.md", tests, function(err){});
+        const hdgCredits   = "## Credits\n";
+        fs.appendFileSync(fileName, hdgCredits);
 
-                    const image         = "![Alt Text](" + userImage + ")";
-                    fs.appendFile("gdReadMe.md", image, function(err){});                     
-              })
-        })
-    })
+        const credits      = answers.credits + "\n\n";
+        fs.appendFileSync(fileName, credits);
+
+        const hdgLicense   = "## License\n";
+        fs.appendFileSync(fileName, hdgLicense);
+
+        const license      = answers.license + "\n\n";
+        fs.appendFileSync(fileName, license);
+
+        const hdgBadges    = "## Badges\n";
+        fs.appendFileSync(fileName, hdgBadges);
+
+        //const badges       = answers.badges + "\n\n";
+        const badges       = 
+             "[GitHub](https://img.shields.io/badge/license-MIT-green)\n\n";
+        fs.appendFileSync(fileName, badges);
+
+        const hdgContribute = "## Contributing\n";
+        fs.appendFileSync(fileName, hdgContribute);
+
+        const contribute    = answers.contribute + "\n\n";
+        fs.appendFileSync(fileName, contribute);
+
+        const hdgTests      = "## Tests\n";
+        fs.appendFileSync(fileName, hdgTests);
+
+        const tests         = answers.tests + "\n\n";
+        fs.appendFileSync(fileName, tests);
+
+        const questions     = "## Questions\n";
+        //const questions     = answers.questions + "\n\n";
+        fs.appendFileSync(fileName, questions);
+
+        const email     = "Email: " + userEmail + "\n\n";
+        fs.appendFileSync(fileName, email);
+
+        const image         = "![Alt Text](" + userImage + ")";
+        fs.appendFileSync(fileName, image);
+
+    } catch (err) {
+        console.log(err);
+    }
+
 }
-
-// function qetUserRepoInfo() {
-//     inquirer
-//         .prompt(questions)
-//         .then(function(answers) {
-//             console.log(answers);
-//         })
-// }
-
-
-
-init();
-
-//getUserRepoInfo();
-
-
-
-        //var filename = data.name.toLowerCase().split(' ').join('') + ".json";
-        //fs.writeFile(filename, JSON.stringify(data, null, '\t'), function(err) {
-        //  if (err) {
-        //    return console.log(err);
-        //  }
-        //  console.log("Success!");
