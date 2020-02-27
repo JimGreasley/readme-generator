@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
-    "electron": "^5.0.3",
+    "electron": "^5.0.13",
     "electron-html-to": "^2.6.0",
     "inquirer": "^6.5.2",
     "open": "^6.3.0"
