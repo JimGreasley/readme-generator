@@ -3,7 +3,7 @@
 
 ## Description
 
-Create a good README from user input.
+Create a good README based on user input.
 
 ## Table of Contents
 * [Installation](#installation)

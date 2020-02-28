@@ -30,4 +30,9 @@ Both the API and generateMarkdown functions are defined in their own files withi
 
 ## Link
 
+.images/readme-gen.gif
+
+
+## Link
+
 https://jimgreasley.github.io/readme-generator/
