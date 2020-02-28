@@ -1,13 +1,18 @@
 // Node modules
 const inquirer = require("inquirer");
 const dotenv = require('dotenv');
+const util = require("util");
 const fs = require('fs');
 
+// Local modules
 const API = require("./utils/api");
+const generateMarkdown = require("./utils/generateMarkdown");
 
+// global vars for GitHub data
 var userImage = "";
 var userEmail;
 
+const writeFileAsync = util.promisify(fs.writeFile);
 
 const questions = [
     {
@@ -37,7 +42,7 @@ const questions = [
     },
     {
         type: "input",
-        message: "Please specify the license (if any) governing your project.",
+        message: "Please specify the license (if any) governing your project:",
         name: "license"
     },
     // {
@@ -75,7 +80,7 @@ async function main() {
     const { data } = await API.getUser(username);
     //console.log(data);
     userImage = data.avatar_url;
-    console.log(userImage);
+    //console.log(userImage);
     if (data.email === null) {
         userEmail = "not available"
     } else {
@@ -84,7 +89,11 @@ async function main() {
 
     const answers = await inquirer.prompt(questions)
 
-    writeToFile("gdReadMe.md", answers);
+    const markdown = generateMarkdown(answers, userEmail, userImage);
+
+    return writeFileAsync("gdReadMe.md", markdown);
+
+    //writeToFile("gdReadMe.md", answers);
 
 }
 
@@ -92,89 +101,89 @@ async function main() {
 main();
 
 
-async function writeToFile(fileName, answers) {
-    try {
+// async function writeToFile(fileName, answers) {
+//     try {
     
-        console.log(answers);
+//         console.log(answers);
 
-        const title = "# " + answers.projectTitle + "\n\n";
-        //const title = "# ReadMe Generator\n\n";
-        fs.writeFileSync(fileName, title);
+//         const title = "# " + answers.projectTitle + "\n\n";
+//         //const title = "# ReadMe Generator\n\n";
+//         fs.writeFileSync(fileName, title);
 
-        const hdgDesc     = "## Description\n";
-        fs.appendFileSync(fileName, hdgDesc);
+//         const hdgDesc     = "## Description\n";
+//         fs.appendFileSync(fileName, hdgDesc);
 
-        const description = answers.projectDescription + "\n\n";
-        //const description = "Create a good README from user input.\n\n";
-        fs.appendFileSync(fileName, description);
+//         const description = answers.projectDescription + "\n\n";
+//         //const description = "Create a good README from user input.\n\n";
+//         fs.appendFileSync(fileName, description);
 
-        const tableOfContents = "## Table of Contents\n\n" +
-                                "* [Installation](#installation)\n" +
-                                "* [Usage](#usage)\n" +
-                                "* [Credits](#credits)\n" +
-                                "* [License](#license)\n" +
-                                "* [Credits](#credits)\n" +
-                                "* [Tests](#tests)\n" +
-                                "* [Contributing](#contributing)\n"
-                                "* [Questions](#questions)\n\n";
-        fs.appendFileSync(fileName, tableOfContents);
+//         const tableOfContents = "## Table of Contents\n\n" +
+//                                 "* [Installation](#installation)\n" +
+//                                 "* [Usage](#usage)\n" +
+//                                 "* [Credits](#credits)\n" +
+//                                 "* [License](#license)\n" +
+//                                 "* [Credits](#credits)\n" +
+//                                 "* [Tests](#tests)\n" +
+//                                 "* [Contributing](#contributing)\n"
+//                                 "* [Questions](#questions)\n\n";
+//         fs.appendFileSync(fileName, tableOfContents);
 
-        const hdgInstall   = "## Installation\n";
-        fs.appendFileSync(fileName, hdgInstall);
+//         const hdgInstall   = "## Installation\n";
+//         fs.appendFileSync(fileName, hdgInstall);
 
-        const installation = answers.installation + "\n\n";
-        fs.appendFileSync(fileName, installation);
+//         const installation = answers.installation + "\n\n";
+//         fs.appendFileSync(fileName, installation);
 
-        const hdgUsage     = "## Usage\n";
-        fs.appendFileSync(fileName, hdgUsage);
+//         const hdgUsage     = "## Usage\n";
+//         fs.appendFileSync(fileName, hdgUsage);
 
-        const usage        = answers.usage + "\n\n";
-        fs.appendFileSync(fileName, usage);
+//         const usage        = answers.usage + "\n\n";
+//         fs.appendFileSync(fileName, usage);
 
-        const hdgCredits   = "## Credits\n";
-        fs.appendFileSync(fileName, hdgCredits);
+//         const hdgCredits   = "## Credits\n";
+//         fs.appendFileSync(fileName, hdgCredits);
 
-        const credits      = answers.credits + "\n\n";
-        fs.appendFileSync(fileName, credits);
+//         const credits      = answers.credits + "\n\n";
+//         fs.appendFileSync(fileName, credits);
 
-        const hdgLicense   = "## License\n";
-        fs.appendFileSync(fileName, hdgLicense);
+//         const hdgLicense   = "## License\n";
+//         fs.appendFileSync(fileName, hdgLicense);
 
-        const license      = answers.license + "\n\n";
-        fs.appendFileSync(fileName, license);
+//         const license      = answers.license + "\n\n";
+//         fs.appendFileSync(fileName, license);
 
-        const hdgBadges    = "## Badges\n";
-        fs.appendFileSync(fileName, hdgBadges);
+//         const hdgBadges    = "## Badges\n";
+//         fs.appendFileSync(fileName, hdgBadges);
 
-        //const badges       = answers.badges + "\n\n";
-        const badges       = 
-             "[GitHub](https://img.shields.io/badge/license-MIT-green)\n\n";
-        fs.appendFileSync(fileName, badges);
+//         //const badges       = answers.badges + "\n\n";
+//         const badges       = 
+//              "[GitHub](https://img.shields.io/badge/license-MIT-green)\n\n";
+//         fs.appendFileSync(fileName, badges);
 
-        const hdgContribute = "## Contributing\n";
-        fs.appendFileSync(fileName, hdgContribute);
+//         const hdgContribute = "## Contributing\n";
+//         fs.appendFileSync(fileName, hdgContribute);
 
-        const contribute    = answers.contribute + "\n\n";
-        fs.appendFileSync(fileName, contribute);
+//         const contribute    = answers.contribute + "\n\n";
+//         fs.appendFileSync(fileName, contribute);
 
-        const hdgTests      = "## Tests\n";
-        fs.appendFileSync(fileName, hdgTests);
+//         const hdgTests      = "## Tests\n";
+//         fs.appendFileSync(fileName, hdgTests);
 
-        const tests         = answers.tests + "\n\n";
-        fs.appendFileSync(fileName, tests);
+//         const tests         = answers.tests + "\n\n";
+//         fs.appendFileSync(fileName, tests);
 
-        const questions     = "## Questions\n";
-        //const questions     = answers.questions + "\n\n";
-        fs.appendFileSync(fileName, questions);
+//         const questions     = "## Questions\n";
+//         //const questions     = answers.questions + "\n\n";
+//         fs.appendFileSync(fileName, questions);
 
-        const email     = "Email: " + userEmail + "\n\n";
-        fs.appendFileSync(fileName, email);
+//         const email     = "Email: " + userEmail + "\n\n";
+//         fs.appendFileSync(fileName, email);
 
-        const image         = "![Alt Text](" + userImage + ")";
-        fs.appendFileSync(fileName, image);
+//         const image         = "![Alt Text](" + userImage + ")";
+//         fs.appendFileSync(fileName, image);
 
-    } catch (err) {
-        console.log(err);
-    }
+//     } catch (err) {
+//         console.log(err);
+//     }
 
-}
+// }

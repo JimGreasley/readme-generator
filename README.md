@@ -1,23 +1,18 @@
 # readme-generator
 
-Create a command-line application that dynamically generates a README.md from a user's input. The application will be invoked with the following command:
-
-```sh
-node index.js
-```
-Refer to the [Good README guide](../../01-HTML-Git-CSS/04-Supplemental/Good-README-Guide/README.md).
+Create a command-line application that dynamically generates a README.md from a user's input.
 
 The user will be prompted for their GitHub username, which will be used to make a call to the GitHub API to retrieve their email and profile image. They will then be prompted with questions about their project.
 
 The README will be populated with the following:
 
-* At least one badge
 * Project title
 * Description
 * Table of Contents
 * Installation
 * Usage
 * License
+* Badge
 * Contributing
 * Tests
 * Questions
@@ -25,25 +20,14 @@ The README will be populated with the following:
   * User GitHub email
 
 
-## Minimum Requirements
+## Algorithm
 
-* Functional, deployed application.
+The main code block is defined as an async function. Within it the GitHub username is prompted using inquirer along with the 'await' option. That is followed by an API call to GitHub, also using 'await' option, to get the user's email and image. Upon return the user's email and image are saved in variables. 
+This is followed by prompting the user, again using inquirer with the 'await' option, for answers to a series of questions about the project for which the README is being created. Then the generateMarkdown function is called, passing the user's answers object and email and image variables, to create the text of the README markdown. Finally, a promisified fs.writeFile function 'writeFileAsync' is used to create the ReadMe markdown file ('gdMReadMe.md') using the data returned by generateMarkdown.
 
-* GitHub repository with a unique name and a README describing project.
+Both the API and generateMarkdown functions are defined in their own files within the utils folder.
 
-* The generated README includes a bio image from the user's GitHub profile.
 
-* The generated README includes the user's email.
+## Link
 
-* The generated README includes the following sections: 
-  * Title
-  * Description
-  * Table of Contents
-  * Installation
-  * Usage
-  * License
-  * Contributing
-  * Tests
-  * Questions
-
-* The generated README includes 1 badge that's specific to the repository.
+https://jimgreasley.github.io/readme-generator/
